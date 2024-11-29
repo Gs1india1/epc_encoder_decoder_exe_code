@@ -1,3 +1,11 @@
+const input = process.argv[2]; // The input will be the third argument in process.argv array
+
+if (!input) {
+    console.error("Error: Please provide a hexadecimal string as input.");
+    console.log("Usage: epc_en_dec.exe <hex_string>");
+    process.exit(1); // Exit the program with an error code
+}
+
 function hexToBinary(hex) {
     return hex.split('').map(char => parseInt(char, 16).toString(2).padStart(4, '0')).join('');
 }
@@ -24,7 +32,6 @@ function checkDigitCalculator(barcode) {
     return checkDigit;
 }
 
-
 function epcDecoder(epcHex) {
     // Convert hex to binary
     //const epcBinary = '001100000011011000011111110000111101000001011010110001001001011101001000011101101110100001111100';
@@ -37,6 +44,10 @@ function epcDecoder(epcHex) {
     let companyPrefixBinary = '';
     let indicatorItemReferenceBinary = '';
    
+   if(header !== '00110000'){
+    console.error("Error: Header is not a known SGTIN-96 EPC header string as input.");
+    process.exit(1);
+   }
     if(partitionDecimal === 0){
         companyPrefixBinary = epcBinary.slice(14, 54); // GS1 Company Prefix (40 bits)
         indicatorItemReferenceBinary = epcBinary.slice(54, 58); // indicator/item reference (4 bits)
@@ -92,7 +103,6 @@ function epcDecoder(epcHex) {
 
 
 // Example EPC in hexadecimal format
-const epcHex = "30361FC3D05AC4974876E865";  // Replace with actual EPC value
-const epc_decode = epcDecoder(epcHex);
-
+// const epcHex = "30361FC3D05AC4974876E865";
+const epc_decode = epcDecoder(input);
 console.log(epc_decode);
